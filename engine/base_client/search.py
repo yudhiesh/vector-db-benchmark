@@ -1,7 +1,7 @@
 import functools
 import time
 from multiprocessing import get_context
-from typing import Iterable, List, Optional, Tuple
+from typing import Any, Iterable, List, Optional, Tuple
 
 import numpy as np
 import tqdm
@@ -26,7 +26,7 @@ class BaseSearcher:
         raise NotImplementedError()
 
     @classmethod
-    def get_mp_start_method(cls):
+    def get_mp_start_method(cls) -> Optional[Any]:
         return None
 
     @classmethod

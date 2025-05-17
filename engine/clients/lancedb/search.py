@@ -11,6 +11,11 @@ class LanceDBSearcher(BaseSearcher):
     parser = LanceDBConditionParser()
 
     @classmethod
+    def get_mp_start_method(cls) -> str:
+        # Refer to https://lancedb.github.io/lancedb/faq/#does-lancedb-support-concurrent-operations
+        return "spawn"
+
+    @classmethod
     def init_client(cls, host, distance, connection_params, search_params):
         uri = get_db_config(host, connection_params)
         db  = lancedb.connect(uri)
