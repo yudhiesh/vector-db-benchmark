@@ -3,6 +3,7 @@ from typing import Optional
 from engine.base_client import IncompatibilityError
 from engine.base_client.parser import BaseConditionParser, FieldValue
 
+
 class LanceDBConditionParser(BaseConditionParser):
     def build_condition(self, and_subfilters, or_subfilters) -> Optional[str]:
         clauses = []
@@ -17,12 +18,15 @@ class LanceDBConditionParser(BaseConditionParser):
 
     def build_range_filter(self, field_name, lt, gt, lte, gte):
         parts = []
-        if lt  is not None: parts.append(f"{field_name} < {lt}")
-        if gt  is not None: parts.append(f"{field_name} > {gt}")
-        if lte is not None: parts.append(f"{field_name} <= {lte}")
-        if gte is not None: parts.append(f"{field_name} >= {gte}")
+        if lt is not None:
+            parts.append(f"{field_name} < {lt}")
+        if gt is not None:
+            parts.append(f"{field_name} > {gt}")
+        if lte is not None:
+            parts.append(f"{field_name} <= {lte}")
+        if gte is not None:
+            parts.append(f"{field_name} >= {gte}")
         return " AND ".join(parts)
 
     def build_geo_filter(self, *args, **kwargs):
         raise IncompatibilityError
-
