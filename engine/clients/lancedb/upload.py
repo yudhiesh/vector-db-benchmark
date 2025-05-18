@@ -12,6 +12,7 @@ class LanceDBUploader(BaseUploader):
         Distance.COSINE: "cosine",
         Distance.DOT: "dot",
     }
+    INDEX_NAME = "vector_idx"
 
     @classmethod
     def init_client(cls, host, distance, connection_params, upload_params):
@@ -30,7 +31,7 @@ class LanceDBUploader(BaseUploader):
         if metric is None:
             raise IncompatibilityError(f"Unsupported metric: {distance}")
         cls.table.create_index(metric=metric)
-        cls.table.wait_for_index()
+        cls.table.wait_for_index([cls.INDEX_NAME])
         return {}
 
     @classmethod

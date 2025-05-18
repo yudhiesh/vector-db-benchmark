@@ -48,7 +48,7 @@ class LanceDBSearcher(BaseSearcher):
         else:
             df = tbl.search(query.vector).limit(top).to_pandas()
 
-        return list(zip(df["id"].tolist(), df["_vector_score"].tolist()))
+        return list(zip(df["id"].tolist(), df["_distance"].tolist()))
 
     @classmethod
     def delete_client(cls):
