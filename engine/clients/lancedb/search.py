@@ -56,6 +56,7 @@ class LanceDBSearcher(BaseSearcher):
 
     @classmethod
     def build_filter_expr(
+        cls,
         table: lancedb.table.Table,
         filter_method: FilterMethod,
         query: Query,
