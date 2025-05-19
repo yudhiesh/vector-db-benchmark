@@ -17,21 +17,33 @@ class LanceDBConfigurator(BaseConfigurator):
         self.db.drop_table(LANCEDB_COLLECTION_NAME, ignore_missing=True)
 
     def recreate(self, dataset: Dataset, collection_params):
-        if dataset.config.vector_size:
-            schema = pa.schema(
-                [
-                    pa.field("id", pa.int64()),
-                    pa.field(
-                        "vector",
-                        pa.list_(pa.float32(), list_size=dataset.config.vector_size),
-                    ),
-                ]
-            )
-            self.table = self.db.create_table(
-                LANCEDB_COLLECTION_NAME, schema=schema, mode="overwrite"
-            )
-        else:
-            raise IncompatibilityError
+        if not dataset.config.vector_size:
+            raise IncompatibilityError("Dataset has no vector_size")
+
+        fields = [
+            pa.field("id", pa.int64()),
+            pa.field(
+                "vector",
+                pa.list_(pa.float32(), list_size=dataset.config.vector_size),
+            ),
+        ]
+
+        for name, typ in (dataset.config.schema or {}).items():
+            if typ == "int":
+                fields.append(pa.field(name, pa.int64()))
+            elif typ == "float":
+                fields.append(pa.field(name, pa.float32()))
+            elif typ in ("keyword", "text"):
+                fields.append(pa.field(name, pa.string()))
+            else:
+                raise IncompatibilityError(f"Unsupported schema type: {typ}")
+
+        full_schema = pa.schema(fields)
+        self.table = self.db.create_table(
+            LANCEDB_COLLECTION_NAME,
+            schema=full_schema,
+            mode="overwrite"
+        )
 
     def delete_client(self):
         pass

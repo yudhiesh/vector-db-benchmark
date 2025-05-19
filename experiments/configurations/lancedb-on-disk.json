@@ -15,21 +15,6 @@
     }
   },
   {
-    "name": "lancedb-parallel-4",
-    "engine": "lancedb",
-    "connection_params": {},
-    "collection_params": {},
-    "search_params": [
-      {
-        "parallel": 4
-      }
-    ],
-    "upload_params": {
-      "parallel": 4,
-      "batch_size": 1024
-    }
-  },
-  {
     "name": "lancedb-prefilter",
     "engine": "lancedb",
     "connection_params": {},

@@ -38,13 +38,11 @@ class LanceDBSearcher(BaseSearcher):
         3) Run the kNN search on the “vector” column and return (id, score) pairs.
         """
         tbl = cls.table
-
         expr = cls.parser.parse(query.meta_conditions)
         filter_method_spec = cls.search_params.get("filter_method")
         if expr and filter_method_spec:
             filter_method = FilterMethod(filter_method_spec)
             df = cls.build_filter_expr(tbl, filter_method, query, top, expr)
-
         else:
             df = tbl.search(query.vector).limit(top).to_pandas()
 
@@ -65,10 +63,11 @@ class LanceDBSearcher(BaseSearcher):
     ) -> pd.DataFrame:
         if FilterMethod.PREFILTER == filter_method:
             return (
-                table.where(filter_expr, prefilter=True)
+                table
                 .search(query.vector)
+                .where(filter_expr, prefilter=True)
                 .limit(top)
                 .to_pandas()
             )
         if FilterMethod.POSTFILTER == filter_method:
-            return table.where(filter_expr).search(query.vector).limit(top).to_pandas()
+            return table.search(query.vector).where(filter_expr).limit(top).to_pandas()

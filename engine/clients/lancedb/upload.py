@@ -22,7 +22,23 @@ class LanceDBUploader(BaseUploader):
 
     @classmethod
     def upload_batch(cls, batch):
-        records = [{"id": rec.id, "vector": rec.vector} for rec in batch]
+        records = []
+        for rec in batch:
+            rec_dict = {
+                "id": rec.id,
+                "vector": rec.vector,
+            }
+
+            if hasattr(rec, "metadata") and isinstance(rec.metadata, dict):
+                rec_dict.update(rec.metadata)
+
+            else:
+                for key, val in rec.__dict__.items():
+                    if key not in ("id", "vector"):
+                        rec_dict[key] = val
+
+            records.append(rec_dict)
+
         cls.table.add(records)
 
     @classmethod
